@@ -1,5 +1,3 @@
-# 🌡️ Urban Heat Island Mitigation Credits
-
 ## 🌱 Overview
 
 A blockchain-based marketplace for trading environmental credits from urban cooling projects. Fight climate change while earning rewards through rooftop greening, reflective materials, and other heat mitigation initiatives.
@@ -12,12 +10,14 @@ A blockchain-based marketplace for trading environmental credits from urban cool
 - 🛒 **Marketplace**: Buy and sell credits in a decentralized marketplace
 - ♻️ **Credit Retirement**: Permanently retire credits to offset carbon footprint
 - 👥 **Verifier Network**: Authorized verifiers ensure project legitimacy
+- 🔄 **Project Updates**: Modify project details before verification
 
 ## 📋 Contract Functions
 
 ### Project Management
 ```clarity
 (register-project project-type location area-sqm expected-credits)
+(update-project project-id new-project-type new-location new-area-sqm new-expected-credits)
 (verify-project project-id temperature-reduction drone-data-hash)
 (mint-credits project-id)
 ```
@@ -49,18 +49,28 @@ A blockchain-based marketplace for trading environmental credits from urban cool
 
 ### 1. Register a Project
 ```clarity
-(contract-call? .urban-heat-island-mitigation-credits register-project 
-  "green-roof" 
-  "Downtown Building A, Block 5" 
-  u500 
+(contract-call? .urban-heat-island-mitigation-credits register-project
+  "green-roof"
+  "Downtown Building A, Block 5"
+  u500
   u1000)
+```
+
+### 1.5 Update Project (Optional)
+```clarity
+(contract-call? .urban-heat-island-mitigation-credits update-project
+  u1
+  "reflective"
+  "Updated Location"
+  u600
+  u1200)
 ```
 
 ### 2. Verify Project (Verifiers Only)
 ```clarity
-(contract-call? .urban-heat-island-mitigation-credits verify-project 
-  u1 
-  u25 
+(contract-call? .urban-heat-island-mitigation-credits verify-project
+  u1
+  u25
   0x1234567890abcdef...)
 ```
 
@@ -71,9 +81,9 @@ A blockchain-based marketplace for trading environmental credits from urban cool
 
 ### 4. Create Sell Offer
 ```clarity
-(contract-call? .urban-heat-island-mitigation-credits create-sell-offer 
-  u1 
-  u500 
+(contract-call? .urban-heat-island-mitigation-credits create-sell-offer
+  u1
+  u500
   u1000000)
 ```
 

@@ -87,6 +87,27 @@
     (ok project-id)
   )
 )
+(define-public (update-project
+  (project-id uint)
+  (new-project-type (string-ascii 32))
+  (new-location (string-ascii 128))
+  (new-area-sqm uint)
+  (new-expected-credits uint)
+)
+  (let ((project (unwrap! (map-get? projects project-id) err-not-found)))
+    (asserts! (is-eq tx-sender (get owner project)) err-unauthorized)
+    (asserts! (not (get verified project)) err-already-verified)
+    (map-set projects project-id
+      (merge project {
+        project-type: new-project-type,
+        location: new-location,
+        area-sqm: new-area-sqm,
+        expected-credits: new-expected-credits
+      })
+    )
+    (ok true)
+  )
+)
 
 (define-public (verify-project
   (project-id uint)
