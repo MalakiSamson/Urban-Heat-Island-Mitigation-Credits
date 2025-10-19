@@ -11,6 +11,7 @@ A blockchain-based marketplace for trading environmental credits from urban cool
 - ♻️ **Credit Retirement**: Permanently retire credits to offset carbon footprint
 - 👥 **Verifier Network**: Authorized verifiers ensure project legitimacy
 - 🔄 **Project Updates**: Modify project details before verification
+- 🔑 **Allowance Mechanism**: Delegate transfer rights for enhanced flexibility in credit management
 
 ## 📋 Contract Functions
 
@@ -29,6 +30,14 @@ A blockchain-based marketplace for trading environmental credits from urban cool
 (retire-credits amount)
 ```
 
+### Allowance Mechanism
+```clarity
+(approve spender amount)
+(transfer-from owner recipient amount)
+(increase-allowance spender added-amount)
+(decrease-allowance spender subtracted-amount)
+```
+
 ### Administration
 ```clarity
 (add-verifier verifier-principal)
@@ -39,10 +48,11 @@ A blockchain-based marketplace for trading environmental credits from urban cool
 ### Read-Only Functions
 ```clarity
 (get-project project-id)
-(get-verification project-id) 
+(get-verification project-id)
 (get-credit-offer project-id seller)
 (get-balance account)
 (is-verifier verifier)
+(get-allowance owner spender)
 ```
 
 ## 🎯 Usage Example

@@ -49,6 +49,8 @@
   }
 )
 
+(define-map allowances {owner: principal, spender: principal} uint)
+
 (define-public (add-verifier (verifier principal))
   (begin
     (asserts! (is-eq tx-sender contract-owner) err-owner-only)
@@ -218,6 +220,38 @@
   )
 )
 
+(define-public (approve (spender principal) (amount uint))
+  (ok (map-set allowances {owner: tx-sender, spender: spender} amount))
+)
+
+(define-public (transfer-from (owner principal) (recipient principal) (amount uint))
+  (let (
+    (current-allowance (default-to u0 (map-get? allowances {owner: owner, spender: tx-sender})))
+  )
+    (asserts! (>= current-allowance amount) err-insufficient-balance)
+    (try! (ft-transfer? uhi-credit amount owner recipient))
+    (map-set allowances {owner: owner, spender: tx-sender} (- current-allowance amount))
+    (ok amount)
+  )
+)
+
+(define-public (increase-allowance (spender principal) (added-amount uint))
+  (let (
+    (current-allowance (default-to u0 (map-get? allowances {owner: tx-sender, spender: spender})))
+  )
+    (ok (map-set allowances {owner: tx-sender, spender: spender} (+ current-allowance added-amount)))
+  )
+)
+
+(define-public (decrease-allowance (spender principal) (subtracted-amount uint))
+  (let (
+    (current-allowance (default-to u0 (map-get? allowances {owner: tx-sender, spender: spender})))
+  )
+    (asserts! (>= current-allowance subtracted-amount) err-insufficient-balance)
+    (ok (map-set allowances {owner: tx-sender, spender: spender} (- current-allowance subtracted-amount)))
+  )
+)
+
 (define-public (set-verification-fee (new-fee uint))
   (begin
     (asserts! (is-eq tx-sender contract-owner) err-owner-only)
@@ -251,6 +285,10 @@
 
 (define-read-only (get-balance (account principal))
   (ft-get-balance uhi-credit account)
+)
+
+(define-read-only (get-allowance (owner principal) (spender principal))
+  (default-to u0 (map-get? allowances {owner: owner, spender: spender}))
 )
 
 (define-read-only (get-token-uri)
