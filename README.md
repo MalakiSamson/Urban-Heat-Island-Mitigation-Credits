@@ -11,7 +11,8 @@ A blockchain-based marketplace for trading environmental credits from urban cool
 - ♻️ **Credit Retirement**: Permanently retire credits to offset carbon footprint
 - 👥 **Verifier Network**: Authorized verifiers ensure project legitimacy
 - 🔄 **Project Updates**: Modify project details before verification
-- 🔑 **Allowance Mechanism**: Delegate transfer rights for enhanced flexibility in credit management
+- 🔒 **Credit Locking**: Lock credits for bonus rewards and long-term commitment incentives
+- � **Allowance Mechanism**: Delegate transfer rights for enhanced flexibility in credit management
 
 ## 📋 Contract Functions
 
@@ -35,6 +36,11 @@ A blockchain-based marketplace for trading environmental credits from urban cool
 (approve spender amount)
 (transfer-from owner recipient amount)
 (increase-allowance spender added-amount)
+### Credit Locking
+```clarity
+(lock-credits amount lock-period bonus-rate)
+(unlock-credits)
+```
 (decrease-allowance spender subtracted-amount)
 ```
 
@@ -47,6 +53,7 @@ A blockchain-based marketplace for trading environmental credits from urban cool
 
 ### Read-Only Functions
 ```clarity
+(get-locked-credits account)
 (get-project project-id)
 (get-verification project-id)
 (get-credit-offer project-id seller)
@@ -137,6 +144,7 @@ clarinet deploy --network testnet
 ## 🌍 Project Types
 
 - **green-roof**: Living rooftops with vegetation
+- Credit locking mechanism for long-term commitment incentives
 - **reflective**: High-albedo reflective surfaces
 - **shade**: Tree planting and shade structures  
 - **permeable**: Permeable pavement solutions
@@ -147,6 +155,7 @@ clarinet deploy --network testnet
 - Multi-signature verification system
 - Drone data hash validation
 - Credit retirement prevents double-spending
+- Bonus rewards for locked credits to encourage long-term environmental commitment
 - Owner-only administrative functions
 - Verifier authorization system
 

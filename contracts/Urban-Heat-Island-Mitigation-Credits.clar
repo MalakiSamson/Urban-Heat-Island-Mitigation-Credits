@@ -51,6 +51,15 @@
 
 (define-map allowances {owner: principal, spender: principal} uint)
 
+(define-map locked-credits
+  principal
+  {
+    amount: uint,
+    unlock-height: uint,
+    bonus-rate: uint
+  }
+)
+
 (define-public (add-verifier (verifier principal))
   (begin
     (asserts! (is-eq tx-sender contract-owner) err-owner-only)
@@ -252,6 +261,38 @@
   )
 )
 
+(define-public (lock-credits (amount uint) (lock-period uint) (bonus-rate uint))
+  (let (
+    (current-balance (ft-get-balance uhi-credit tx-sender))
+    (unlock-height (+ burn-block-height lock-period))
+  )
+    (asserts! (>= current-balance amount) err-insufficient-balance)
+    (try! (ft-transfer? uhi-credit amount tx-sender (as-contract tx-sender)))
+    (ok (map-set locked-credits tx-sender {
+      amount: amount,
+      unlock-height: unlock-height,
+      bonus-rate: bonus-rate
+    }))
+  )
+)
+
+(define-public (unlock-credits)
+  (let (
+    (locked-data (unwrap! (map-get? locked-credits tx-sender) err-not-found))
+    (current-height burn-block-height)
+    (locked-amount (get amount locked-data))
+    (unlock-height (get unlock-height locked-data))
+    (bonus-rate (get bonus-rate locked-data))
+    (bonus-amount (/ (* locked-amount bonus-rate) u100))
+    (total-amount (+ locked-amount bonus-amount))
+  )
+    (asserts! (>= current-height unlock-height) err-unauthorized)
+    (try! (as-contract (ft-transfer? uhi-credit total-amount tx-sender tx-sender)))
+    (map-delete locked-credits tx-sender)
+    (ok total-amount)
+  )
+)
+
 (define-public (set-verification-fee (new-fee uint))
   (begin
     (asserts! (is-eq tx-sender contract-owner) err-owner-only)
@@ -289,6 +330,10 @@
 
 (define-read-only (get-allowance (owner principal) (spender principal))
   (default-to u0 (map-get? allowances {owner: owner, spender: spender}))
+)
+
+(define-read-only (get-locked-credits (account principal))
+  (map-get? locked-credits account)
 )
 
 (define-read-only (get-token-uri)
