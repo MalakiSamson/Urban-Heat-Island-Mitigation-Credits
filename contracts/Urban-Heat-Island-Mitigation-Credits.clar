@@ -300,6 +300,15 @@
   )
 )
 
+(define-public (transfer-project-ownership (project-id uint) (new-owner principal))
+  (let ((project (unwrap! (map-get? projects project-id) err-not-found)))
+    (asserts! (is-eq tx-sender (get owner project)) err-unauthorized)
+    (asserts! (not (get verified project)) err-already-verified)
+    (map-set projects project-id (merge project {owner: new-owner}))
+    (ok true)
+  )
+)
+
 (define-read-only (get-project (project-id uint))
   (map-get? projects project-id)
 )

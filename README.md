@@ -177,3 +177,16 @@ Credits are awarded based on:
 ## 📄 License
 
 MIT License - Building a cooler future together! 🌱
+
+## 🆕 Recent Enhancements
+
+### Project Ownership Transfer
+- 🔄 **Ownership Transfer**: Enables project owners to transfer project ownership to another principal before verification, facilitating project delegation, sales, or inheritance.
+- **Function**: `(transfer-project-ownership project-id new-owner)`
+- **Usage Example**:
+  ```clarity
+  (contract-call? .urban-heat-island-mitigation-credits transfer-project-ownership
+    u1
+    'SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7)
+  ```
+- **Benefits**: Enhances project management flexibility and supports secondary project markets.
